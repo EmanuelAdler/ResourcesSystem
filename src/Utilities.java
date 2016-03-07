@@ -31,7 +31,14 @@ public class Utilities {
 		System.out.println("10. Relatorio da unidade academica");
 		System.out.println("11. Sair");
 		
-		int option = sc.nextInt();
+		int option;
+		String optionAux = sc.nextLine();
+		try {
+			option = Integer.parseInt (optionAux);
+		} catch (NumberFormatException e) {
+		    System.out.println("Opcao invalida");
+		    return false;
+		}
 		
 		switch (option) {
 		case 1:
@@ -78,7 +85,15 @@ public class Utilities {
 			System.out.println("2. Auditorio");
 			System.out.println("3. Laboratorio");
 			System.out.println("4. Projetor");
-			int type = sc.nextInt();
+			int type;
+			String typeAux = sc.nextLine();
+			try {
+				type = Integer.parseInt (typeAux);
+			} catch (NumberFormatException e) {
+			    System.out.println("Opcao invalida");
+			    return false;
+			}
+			
 			if(type == 1)
 				searchResource("Classroom");
 			else if(type == 2)
