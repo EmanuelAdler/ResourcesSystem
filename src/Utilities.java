@@ -1,6 +1,10 @@
 import user.*;
 import resource.*;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 
 import javax.annotation.Resources;
@@ -37,6 +41,14 @@ public class Utilities {
 			break;
 		case 3:
 			String aux = sc.nextLine();
+			if(userList.size() == 0){
+				System.out.println("Nao ha usuarios cadastrados");
+				return;
+			}
+			if(resourcesList.size() == 0){
+				System.out.println("Nao ha recursos cadastrados");
+				return;
+			}
 			System.out.println("Insira o nome do usuario:");
 			String name = sc.nextLine();
 			newAllocation(name);
@@ -111,6 +123,8 @@ public class Utilities {
 			createResearcher();
 			break;
 		default:
+			System.out.println("Opcao invalida");
+			addUser();
 			break;
 		}
 		
@@ -124,6 +138,7 @@ public class Utilities {
 		String email = sc.nextLine();
 		Researcher newUser = new Researcher(name, email);
 		userList.add(newUser);
+		System.out.println("Usuario adicionado com sucesso");
 		mainUtility();
 	}
 	
@@ -159,6 +174,7 @@ public class Utilities {
 			break;
 		default:
 			System.out.println("Opcao invalida");
+			createStudent();
 			break;
 		}
 	}
@@ -204,6 +220,8 @@ public class Utilities {
 			createProjector();
 			break;
 		default:
+			System.out.println("Opcao invalida");
+			addResource();
 			break;
 		}
 		mainUtility();
@@ -264,11 +282,17 @@ public class Utilities {
 						aux = sc.nextLine();
 						break;
 					default:
+						System.out.println("Opcao invalida");
+						newAllocation(name);
 						break;
 					}
 				}
 				else if(userList.get(i) instanceof Researcher)
 					newActivity.setTitle("apresentacao");
+			}
+			else if(i == userList.size()-1){
+				System.out.println("Usuario nao encontrado");
+				return;
 			}
 		}
 		System.out.println("Descricao da atividade:");
@@ -280,8 +304,20 @@ public class Utilities {
 		
 		System.out.println("Data de inicio: (dd/mm/aaaa)");
 		String startDate = sc.nextLine();
+		
 		System.out.println("Data de termino: (dd/mm/aaaa)");
 		String endDate = sc.nextLine();
+		
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		Date startDate2 = null;
+		Date endDate2 = null;
+		try {
+		    startDate2 = dateFormat.parse(startDate);
+		    endDate2 = dateFormat.parse(endDate);
+		} catch (ParseException e) {
+		    System.out.println("Data inserida incorretamente");
+		    return;
+		}
 		
 		System.out.println("Escolha o recurso:");
 		System.out.println("1. Laboratorio");
@@ -294,7 +330,7 @@ public class Utilities {
 		case 1:
 			for(int i = 0; i < resourcesList.size(); i++){
 				if(resourcesList.get(i) instanceof Laboratory && resourcesList.get(i).getAllocated() == false){
-					Allocation newAllocation = new Allocation(startDate, endDate, resourcesList.get(i).getId());
+					Allocation newAllocation = new Allocation(startDate2, endDate2, resourcesList.get(i).getId());
 					allocationList.add(newAllocation);
 					resourcesList.get(i).setAllocated(true);
 					for(int j = 0;j < userList.size(); j++){
@@ -313,7 +349,7 @@ public class Utilities {
 		case 2:
 			for(int i = 0; i < resourcesList.size(); i++){
 				if(resourcesList.get(i) instanceof Classroom && resourcesList.get(i).getAllocated() == false){
-					Allocation newAllocation = new Allocation(startDate, endDate, resourcesList.get(i).getId());
+					Allocation newAllocation = new Allocation(startDate2, endDate2, resourcesList.get(i).getId());
 					allocationList.add(newAllocation);
 					resourcesList.get(i).setAllocated(true);
 					for(int j = 0;j < userList.size(); j++){
@@ -332,7 +368,7 @@ public class Utilities {
 		case 3:
 			for(int i = 0; i < resourcesList.size(); i++){
 				if(resourcesList.get(i) instanceof Auditorium && resourcesList.get(i).getAllocated() == false){
-					Allocation newAllocation = new Allocation(startDate, endDate, resourcesList.get(i).getId());
+					Allocation newAllocation = new Allocation(startDate2, endDate2, resourcesList.get(i).getId());
 					allocationList.add(newAllocation);
 					resourcesList.get(i).setAllocated(true);
 					for(int j = 0;j < userList.size(); j++){
@@ -351,7 +387,7 @@ public class Utilities {
 		case 4:
 			for(int i = 0; i < resourcesList.size(); i++){
 				if(resourcesList.get(i) instanceof Projector){
-					Allocation newAllocation = new Allocation(startDate, endDate, resourcesList.get(i).getId());
+					Allocation newAllocation = new Allocation(startDate2, endDate2, resourcesList.get(i).getId());
 					allocationList.add(newAllocation);
 					for(int j = 0;j < userList.size(); j++){
 						if(userList.get(j).getName().equalsIgnoreCase(name)){
@@ -511,8 +547,13 @@ public class Utilities {
 						result = "Tipo: Projetor\n";
 					else if(resourcesList.get(j) instanceof Laboratory)
 						result = "Tipo: Laboratorio\n";
+					SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+					String parsedStartDate = dateFormat.format((allocationList.get(i).getStartDate()));
+					String parsedEndDate = dateFormat.format((allocationList.get(i).getEndDate()));
 					result = result + "Id: " + resourcesList.get(j).getId() + 
-							"\nStatus: " + allocationList.get(i).getStatus();
+							"\nStatus: " + allocationList.get(i).getStatus() + 
+							"\nData de inicio: " + parsedStartDate +
+							"\nData de termino: " + parsedEndDate;
 					System.out.println(result);
 				}
 			}
