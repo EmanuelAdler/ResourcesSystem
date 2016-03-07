@@ -6,7 +6,7 @@ import resource.*;
 public class User {
 	protected String name;
 	protected String email;
-	protected ArrayList<Resource> resourcesList;
+	public ArrayList<Resource> resourcesList;
 	
 	public User(String name, String email){
 		this.name = name;

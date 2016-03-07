@@ -18,10 +18,13 @@ public class Utilities {
 		System.out.println("1. Adicionar usuario");
 		System.out.println("2. Adicionar recurso");
 		System.out.println("3. Alocar recurso");
-		System.out.println("4. Procurar usuario");
-		System.out.println("5. Procurar recurso");
-		System.out.println("6. Verificar lista de alocacoes");
-		System.out.println("7. Sair");
+		System.out.println("4. Adicionar usuario a uma alocacao");
+		System.out.println("5. Procurar usuario");
+		System.out.println("6. Procurar recurso");
+		System.out.println("7. Verificar lista e status de alocacoes");
+		System.out.println("8. Atualizar status de alocacoes");
+		System.out.println("9. Confirmar alocacao");
+		System.out.println("10. Sair");
 		
 		int option = sc.nextInt();
 		
@@ -42,9 +45,15 @@ public class Utilities {
 			System.out.println("Insira o nome do usuário:");
 			aux = sc.nextLine();
 			name = sc.nextLine();
-			searchUser(name);
+			addUserToAllocation(name);
 			break;
 		case 5:
+			System.out.println("Insira o nome do usuário:");
+			aux = sc.nextLine();
+			name = sc.nextLine();
+			searchUser(name);
+			break;
+		case 6:
 			System.out.println("Insira o tipo de recurso:");
 			System.out.println("1. Sala de aula");
 			System.out.println("2. Auditorio");
@@ -60,10 +69,16 @@ public class Utilities {
 			else if(type == 4)
 				searchResource("Projector");
 			break;
-		case 6:
+		case 7:
 			getAllAllocations();
 			break;
-		case 7:
+		case 8:
+			updateStatus();
+			break;
+		case 9:
+			confirmAllocation();
+			break;
+		case 10:
 			System.exit(0);
 			break;
 		default:
@@ -224,7 +239,11 @@ public class Utilities {
 		Activity newActivity = new Activity("", "", "");
 		for(int i = 0;i < userList.size(); i++){
 			if(userList.get(i).getName().equalsIgnoreCase(name)){
-				if(userList.get(i) instanceof Professor){
+				if(userList.get(i) instanceof Student){
+					System.out.println("Vode nao tem permissao para iniciar a alocao de um recurso");
+					return;
+				}
+				else if(userList.get(i) instanceof Professor){
 					System.out.println("Escolha a atividade:");
 					System.out.println("1. Aula");
 					System.out.println("2. Laboratorio");
@@ -248,7 +267,7 @@ public class Utilities {
 						break;
 					}
 				}
-				else
+				else if(userList.get(i) instanceof Researcher)
 					newActivity.setTitle("apresentacao");
 			}
 		}
@@ -492,10 +511,115 @@ public class Utilities {
 						result = "Tipo: Projetor\n";
 					else if(resourcesList.get(j) instanceof Laboratory)
 						result = "Tipo: Laboratorio\n";
-					result = result + "Id: " + resourcesList.get(j).getId() + "\n";
+					result = result + "Id: " + resourcesList.get(j).getId() + 
+							"\nStatus: " + allocationList.get(i).getStatus();
 					System.out.println(result);
 				}
 			}
 		}
 	}
+	
+	private void addUserToAllocation(String name) {
+		for(int i = 0; i < userList.size(); i++){
+			if(userList.get(i).getName().equalsIgnoreCase(name)){
+				System.out.println("Escolha uma alocacao disponivel:");
+				for(int j = 0; j < allocationList.size(); j++){
+					for(int k = 0; k < resourcesList.size(); k++){
+						if(allocationList.get(j).getResourceId() == resourcesList.get(k).getId()){
+							String result;
+							if(resourcesList.get(k) instanceof Classroom){
+								System.out.println(j + ". Sala de aula\nId: " + resourcesList.get(k).getId());
+							}
+							else if(resourcesList.get(k) instanceof Laboratory){
+								System.out.println(j + ". Laboratorio\nId: " + resourcesList.get(k).getId());
+							}
+							else if(resourcesList.get(k) instanceof Auditorium){
+								System.out.println(j + ". Auditorio\nId: " + resourcesList.get(k).getId());
+							}
+							else if(resourcesList.get(k) instanceof Projector){
+								System.out.println(j + ". Projetor\nId: " + resourcesList.get(k).getId());
+							}
+						}
+					}
+				}
+				Scanner sc = new Scanner(System.in);
+				int option = sc.nextInt();
+				allocationList.get(option).userlist.add(userList.get(i));
+				for(int k = 0; k < resourcesList.size(); k++){
+					if(allocationList.get(option).getResourceId() == resourcesList.get(k).getId()){
+						userList.get(i).resourcesList.add(resourcesList.get(k));
+					}
+				}
+				
+				return;
+			}
+		}
+	}
+	
+	public void updateStatus(){
+		String result = "";
+		for(int i = 0; i < allocationList.size(); i++){
+			if(allocationList.get(i).getStatus() == "em processo de alocacao"){
+				allocationList.get(i).setStatus("alocado");
+				for(int j = 0; j < resourcesList.size(); j++){
+					if(resourcesList.get(j).getId() == allocationList.get(i).getResourceId()){
+						if(resourcesList.get(i) instanceof Classroom)
+							result = "Sala de aula\n";
+						else if(resourcesList.get(i) instanceof Projector)
+							result = "Projetor\n";
+						else if(resourcesList.get(i) instanceof Auditorium)
+							result = "Auditorio\n";
+						else if(resourcesList.get(i) instanceof Laboratory)
+							result = "Laboratorio\n";
+						
+						result = result + "Status: " + allocationList.get(i).getStatus() + "\n";						
+						result = result + "Id: " + resourcesList.get(j).getId() + "\n";
+						result = result + "Usuarios: ";
+							for(int k = 0; k < allocationList.get(i).userlist.size(); k++){
+								result = result + allocationList.get(i).userlist.get(k).getName() + "\n";
+							}
+					}
+				}
+			}
+			if(allocationList.get(i).getStatus() == "em andamento"){
+				allocationList.get(i).setStatus("concluido");
+				for(int j = 0; j < resourcesList.size(); j++){
+					if(resourcesList.get(j).getId() == allocationList.get(i).getResourceId()){
+						if(resourcesList.get(i) instanceof Classroom)
+							result = "Sala de aula\n";
+						else if(resourcesList.get(i) instanceof Projector)
+							result = "Projetor\n";
+						else if(resourcesList.get(i) instanceof Auditorium)
+							result = "Auditorio\n";
+						else if(resourcesList.get(i) instanceof Laboratory)
+							result = "Laboratorio\n";
+						
+						result = result + "Status: " + allocationList.get(i).getStatus() + "\n";						
+						result = result + "Id: " + resourcesList.get(j).getId() + "\n";
+						result = result + "Usuarios: ";
+							for(int k = 0; k < allocationList.get(i).userlist.size(); k++){
+								result = result + allocationList.get(i).userlist.get(k).getName() + "\n";
+							}
+					}
+				}
+			}
+			
+			System.out.println(result);
+		}
+	}
+	
+	public void confirmAllocation(){
+		System.out.println("Insira o nome do usuario");
+		Scanner sc = new Scanner(System.in);
+		String name = sc.nextLine();
+		
+		for(int i = 0; i < userList.size(); i++){
+			if(userList.get(i).getName().equalsIgnoreCase(name)){
+				for(int j = 0; j < allocationList.size(); j++){
+					allocationList.get(j).setStatus("em andamento");
+				}
+			}
+		}
+	}
+
 }
