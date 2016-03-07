@@ -7,7 +7,7 @@ public class Resource {
 	
 	public Resource(int id) {
 		this.id = id;
-		this.activity = new Activity("", "", "");
+		this.activity = new Activity();
 		this.isAllocated = false;
 	}
 	
@@ -22,6 +22,9 @@ public class Resource {
 	}
 	public Activity getActivity(){
 		return activity;
+	}
+	public void setActivity(Activity activity){
+		this.activity = activity;
 	}
 	
 }

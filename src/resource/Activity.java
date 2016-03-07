@@ -9,10 +9,7 @@ public class Activity {
 	protected ArrayList<User> userList;
 	protected String supportMaterial;
 	
-	public Activity(String title, String description, String supportMaterial) {
-		this.title = title;
-		this.description = description;
-		this.supportMaterial = supportMaterial;
+	public Activity() {
 		this.userList = new ArrayList<User>();
 	}
 

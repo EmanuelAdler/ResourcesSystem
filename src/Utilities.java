@@ -16,7 +16,7 @@ public class Utilities {
 	ArrayList<Allocation> allocationList = new ArrayList<Allocation>();
 	Scanner sc = new Scanner(System.in);
 	
-	public void mainUtility(){
+	public boolean mainUtility(){
 		System.out.println("--- Sistema de Gestao de Recursos ---");
 		System.out.println("Escolha uma opcao");
 		System.out.println("1. Adicionar usuario");
@@ -28,31 +28,32 @@ public class Utilities {
 		System.out.println("7. Verificar lista e status de alocacoes");
 		System.out.println("8. Atualizar status de alocacoes");
 		System.out.println("9. Confirmar alocacao");
-		System.out.println("10. Sair");
+		System.out.println("10. Relatorio da unidade academica");
+		System.out.println("11. Sair");
 		
 		int option = sc.nextInt();
 		
 		switch (option) {
 		case 1:
 			addUser();
-			break;
+			return false;
 		case 2:
 			addResource();
-			break;
+			return false;
 		case 3:
 			String aux = sc.nextLine();
 			if(userList.size() == 0){
 				System.out.println("Nao ha usuarios cadastrados");
-				return;
+				return false;
 			}
 			if(resourcesList.size() == 0){
 				System.out.println("Nao ha recursos cadastrados");
-				return;
+				return false;
 			}
 			System.out.println("Insira o nome do usuario:");
 			String name = sc.nextLine();
 			newAllocation(name);
-			break;
+			return false;
 		case 4:
 			System.out.println("Insira o nome do usuario:");
 			aux = sc.nextLine();
@@ -61,7 +62,7 @@ public class Utilities {
 				System.out.println("Usuario nao encontrado");
 			else
 				addUserToAllocation(name);
-			break;
+			return false;
 		case 5:
 			System.out.println("Insira o nome do usuario:");
 			aux = sc.nextLine();
@@ -70,7 +71,7 @@ public class Utilities {
 				System.out.println("Usuario nao encontrado");
 			else
 				searchUser(name);
-			break;
+			return false;
 		case 6:
 			System.out.println("Insira o tipo de recurso:");
 			System.out.println("1. Sala de aula");
@@ -86,22 +87,25 @@ public class Utilities {
 				searchResource("Laboratory");
 			else if(type == 4)
 				searchResource("Projector");
-			break;
+			return false;
 		case 7:
 			getAllAllocations();
-			break;
+			return false;
 		case 8:
 			updateStatus();
-			break;
+			return false;
 		case 9:
 			confirmAllocation();
-			break;
+			return false;
 		case 10:
+			relatory();
+			return false;
+		case 11:
 			System.exit(0);
-			break;
+			return true;
 		default:
 			System.out.println("Opcao invalida");
-			break;
+			return false;
 		}
 	}
 	
@@ -260,7 +264,7 @@ public class Utilities {
 	}
 	
 	public void newAllocation(String name){
-		Activity newActivity = new Activity("", "", "");
+		Activity newActivity = new Activity();
 		for(int i = 0;i < userList.size(); i++){
 			if(userList.get(i).getName().equalsIgnoreCase(name)){
 				if(userList.get(i) instanceof Student){
@@ -343,6 +347,7 @@ public class Utilities {
 						if(userList.get(j).getName().equalsIgnoreCase(name)){
 							newAllocation.userlist.add(userList.get(j));
 							userList.get(j).getResourcesList().add(resourcesList.get(i));
+							userList.get(j).getResourcesList().get(i).setActivity(newActivity);
 							return;
 							}
 						}
@@ -362,6 +367,7 @@ public class Utilities {
 						if(userList.get(j).getName().equalsIgnoreCase(name)){
 							newAllocation.userlist.add(userList.get(j));
 							userList.get(j).getResourcesList().add(resourcesList.get(i));
+							userList.get(j).getResourcesList().get(i).setActivity(newActivity);
 							return;
 							}
 						}
@@ -381,6 +387,7 @@ public class Utilities {
 						if(userList.get(j).getName().equalsIgnoreCase(name)){
 							newAllocation.userlist.add(userList.get(j));
 							userList.get(j).getResourcesList().add(resourcesList.get(i));
+							userList.get(j).getResourcesList().get(i).setActivity(newActivity);
 							return;
 							}
 						}
@@ -399,6 +406,7 @@ public class Utilities {
 						if(userList.get(j).getName().equalsIgnoreCase(name)){
 							newAllocation.userlist.add(userList.get(j));
 							userList.get(j).getResourcesList().add(resourcesList.get(i));
+							userList.get(j).getResourcesList().get(i).setActivity(newActivity);
 							return;
 							}
 						}
@@ -681,6 +689,51 @@ public class Utilities {
 				}
 			}
 		}
+	}
+	
+	public void relatory(){
+		String result;
+		int quantityEmAndamento = 0;
+		int quantityAlocado = 0;
+		int quantityEmProcesso = 0;
+		int quantityConcluido = 0;
+		
+		for(int i = 0; i < allocationList.size(); i++){
+			if(allocationList.get(i).getStatus().equalsIgnoreCase("em andamento"))
+				quantityEmAndamento++;
+			else if(allocationList.get(i).getStatus().equalsIgnoreCase("alocado"))
+				quantityAlocado++;
+			else if(allocationList.get(i).getStatus().equalsIgnoreCase("em processo de alocacao"))
+				quantityEmProcesso++;
+			else if(allocationList.get(i).getStatus().equalsIgnoreCase("concluido"))
+				quantityConcluido++;
+		}
+		
+		int quantityClass = 0;
+		int quantityPresentation = 0;
+		int quantityLab = 0;
+		
+		for(int i = 0; i < resourcesList.size(); i++){
+			if(resourcesList.get(i).getActivity().getTitle().equalsIgnoreCase("aula"))
+				quantityClass++;
+			if(resourcesList.get(i).getActivity().getTitle().equalsIgnoreCase("laboratorio"))
+				quantityLab++;
+			if(resourcesList.get(i).getActivity().getTitle().equalsIgnoreCase("apresentacao"))
+				quantityPresentation++;
+		}
+		
+		result = "Quantidade de usuarios: " + userList.size()
+			+ "\nQuantidade de recursos 'em andamento': " + quantityEmAndamento
+			+ "\nQuantidade de recursos 'alocado': " + quantityAlocado
+			+ "\nQuantidade de recursos 'em processo de alocacao': " + quantityEmProcesso
+			+ "\nQuantidade de recursos 'concluido': " + quantityConcluido
+			+ "\nTotal de alocacoes: " + allocationList.size()
+			+ "\nQuantidade de aulas tradicionais: " + quantityClass
+			+ "\nQuantidade de aulas em laboratorio: " + quantityLab
+			+ "\nQuantidade de apresentacoes: " + quantityPresentation + "\n";
+		
+		System.out.println(result);
+		
 	}
 
 }
