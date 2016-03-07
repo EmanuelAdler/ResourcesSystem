@@ -54,16 +54,22 @@ public class Utilities {
 			newAllocation(name);
 			break;
 		case 4:
-			System.out.println("Insira o nome do usuário:");
+			System.out.println("Insira o nome do usuario:");
 			aux = sc.nextLine();
 			name = sc.nextLine();
-			addUserToAllocation(name);
+			if(userList.size() == 0)
+				System.out.println("Usuario nao encontrado");
+			else
+				addUserToAllocation(name);
 			break;
 		case 5:
-			System.out.println("Insira o nome do usuário:");
+			System.out.println("Insira o nome do usuario:");
 			aux = sc.nextLine();
 			name = sc.nextLine();
-			searchUser(name);
+			if(userList.size() == 0)
+				System.out.println("Usuario nao encontrado");
+			else
+				searchUser(name);
 			break;
 		case 6:
 			System.out.println("Insira o tipo de recurso:");
@@ -451,8 +457,11 @@ public class Utilities {
 				if(resourcesList.get(i) instanceof Classroom){
 					result = "Sala de aula\n" + 
 							"Id: " + resourcesList.get(i).getId() + "\n";
-					if(resourcesList.get(i).getAllocated())
-						result = result + "Diponivel: Nao\n";
+					if(resourcesList.get(i).getAllocated()){
+						result = result + "Diponivel: Nao\n" + 
+								"Atividade: " + resourcesList.get(i).getActivity().getTitle() + "\n" +
+								"Descricao: " + resourcesList.get(i).getActivity().getDescription() + "\n";
+					}
 					else
 						result = result + "Diponivel: Sim\n";
 					int id = resourcesList.get(i).getId();
@@ -471,8 +480,11 @@ public class Utilities {
 				if(resourcesList.get(i) instanceof Auditorium){
 					result = "Auditorio\n" + 
 							"Id: " + resourcesList.get(i).getId() + "\n";
-					if(resourcesList.get(i).getAllocated())
-						result = result + "Diponivel: Nao\n";
+					if(resourcesList.get(i).getAllocated()){
+						result = result + "Diponivel: Nao\n" + 
+								"Atividade: " + resourcesList.get(i).getActivity().getTitle() + "\n" +
+								"Descricao: " + resourcesList.get(i).getActivity().getDescription() + "\n";
+					}
 					else
 						result = result + "Diponivel: Sim\n";
 					int id = resourcesList.get(i).getId();
@@ -491,8 +503,11 @@ public class Utilities {
 				if(resourcesList.get(i) instanceof Projector){
 					result = "Projetor\n" + 
 							"Id: " + resourcesList.get(i).getId() + "\n";
-					if(resourcesList.get(i).getAllocated())
-						result = result + "Diponivel: Nao\n";
+					if(resourcesList.get(i).getAllocated()){
+						result = result + "Diponivel: Nao\n" + 
+								"Atividade: " + resourcesList.get(i).getActivity().getTitle() + "\n" +
+								"Descricao: " + resourcesList.get(i).getActivity().getDescription() + "\n";
+					}
 					else
 						result = result + "Diponivel: Sim\n";
 					int id = resourcesList.get(i).getId();
@@ -511,8 +526,11 @@ public class Utilities {
 				if(resourcesList.get(i) instanceof Laboratory){
 					result = "Laboratorio\n" + 
 							"Id: " + resourcesList.get(i).getId() + "\n";
-					if(resourcesList.get(i).getAllocated())
-						result = result + "Diponivel: Nao\n";
+					if(resourcesList.get(i).getAllocated()){
+						result = result + "Diponivel: Nao\n" + 
+								"Atividade: " + resourcesList.get(i).getActivity().getTitle() + "\n" +
+								"Descricao: " + resourcesList.get(i).getActivity().getDescription() + "\n";
+					}
 					else
 						result = result + "Diponivel: Sim\n";
 					int id = resourcesList.get(i).getId();
@@ -553,7 +571,9 @@ public class Utilities {
 					result = result + "Id: " + resourcesList.get(j).getId() + 
 							"\nStatus: " + allocationList.get(i).getStatus() + 
 							"\nData de inicio: " + parsedStartDate +
-							"\nData de termino: " + parsedEndDate;
+							"\nData de termino: " + parsedEndDate + 
+							"\nAtividade: " + resourcesList.get(j).getActivity().getTitle() + 
+							"\nDescrição: " + resourcesList.get(j).getActivity().getDescription();
 					System.out.println(result);
 				}
 			}

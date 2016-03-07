@@ -20,5 +20,8 @@ public class Resource {
 	public void setAllocated(boolean isAllocated){
 		this.isAllocated = isAllocated;
 	}
+	public Activity getActivity(){
+		return activity;
+	}
 	
 }
