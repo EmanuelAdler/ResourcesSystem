@@ -48,7 +48,6 @@ public class Utilities {
 			addResource();
 			return false;
 		case 3:
-			String aux = sc.nextLine();
 			if(userList.size() == 0){
 				System.out.println("Nao ha usuarios cadastrados");
 				return false;
@@ -63,7 +62,6 @@ public class Utilities {
 			return false;
 		case 4:
 			System.out.println("Insira o nome do usuario:");
-			aux = sc.nextLine();
 			name = sc.nextLine();
 			if(userList.size() == 0)
 				System.out.println("Usuario nao encontrado");
@@ -72,7 +70,6 @@ public class Utilities {
 			return false;
 		case 5:
 			System.out.println("Insira o nome do usuario:");
-			aux = sc.nextLine();
 			name = sc.nextLine();
 			if(userList.size() == 0)
 				System.out.println("Usuario nao encontrado");
@@ -181,6 +178,7 @@ public class Utilities {
 		System.out.println("2. Mestrado");
 		System.out.println("3. Doutorado");
 		int  type = sc.nextInt();
+		String aux = sc.nextLine();
 		
 		Student newUser;
 		
@@ -239,9 +237,11 @@ public class Utilities {
 			createAuditorium();
 			break;
 		case 3:
+			aux = sc.nextLine();
 			createClassroom();
 			break;
 		case 4:
+			aux = sc.nextLine();
 			createProjector();
 			break;
 		default:
@@ -351,6 +351,7 @@ public class Utilities {
 		System.out.println("4. Projetor");
 		
 		int option = sc.nextInt();
+		String aux = sc.nextLine();
 		switch (option) {
 		case 1:
 			for(int i = 0; i < resourcesList.size(); i++){
@@ -362,14 +363,16 @@ public class Utilities {
 						if(userList.get(j).getName().equalsIgnoreCase(name)){
 							newAllocation.userlist.add(userList.get(j));
 							userList.get(j).getResourcesList().add(resourcesList.get(i));
-							userList.get(j).getResourcesList().get(i).setActivity(newActivity);
+							for(int k = 0; k < userList.get(j).getResourcesList().size(); k++){
+								if(userList.get(j).getResourcesList().get(k).getId() == resourcesList.get(i).getId())
+								userList.get(j).getResourcesList().get(k).setActivity(newActivity);
+							}
 							return;
 							}
 						}
 				}
 				else if(i > 0 && i == resourcesList.size()-1)
 					System.out.println("Nao ha laboratorios disponiveis");
-				return;
 			}
 			break;
 		case 2:
@@ -382,14 +385,16 @@ public class Utilities {
 						if(userList.get(j).getName().equalsIgnoreCase(name)){
 							newAllocation.userlist.add(userList.get(j));
 							userList.get(j).getResourcesList().add(resourcesList.get(i));
-							userList.get(j).getResourcesList().get(i).setActivity(newActivity);
+							for(int k = 0; k < userList.get(j).getResourcesList().size(); k++){
+								if(userList.get(j).getResourcesList().get(k).getId() == resourcesList.get(i).getId())
+								userList.get(j).getResourcesList().get(k).setActivity(newActivity);
+							}
 							return;
 							}
 						}
 				}
 				else if(i > 0 && i == resourcesList.size()-1)
 					System.out.println("Nao ha salas de aula disponiveis");
-				return;
 			}
 			break;
 		case 3:
@@ -402,33 +407,37 @@ public class Utilities {
 						if(userList.get(j).getName().equalsIgnoreCase(name)){
 							newAllocation.userlist.add(userList.get(j));
 							userList.get(j).getResourcesList().add(resourcesList.get(i));
-							userList.get(j).getResourcesList().get(i).setActivity(newActivity);
+							for(int k = 0; k < userList.get(j).getResourcesList().size(); k++){
+								if(userList.get(j).getResourcesList().get(k).getId() == resourcesList.get(i).getId())
+								userList.get(j).getResourcesList().get(k).setActivity(newActivity);
+							}
 							return;
 							}
 						}
 				}
 				else if(i > 0 && i == resourcesList.size()-1)
 					System.out.println("Nao ha auditorios disponiveis");
-				return;
 			}
 			break;
 		case 4:
 			for(int i = 0; i < resourcesList.size(); i++){
 				if(resourcesList.get(i) instanceof Projector){
 					Allocation newAllocation = new Allocation(startDate2, endDate2, resourcesList.get(i).getId());
-					allocationList.add(newAllocation);
 					for(int j = 0;j < userList.size(); j++){
 						if(userList.get(j).getName().equalsIgnoreCase(name)){
 							newAllocation.userlist.add(userList.get(j));
 							userList.get(j).getResourcesList().add(resourcesList.get(i));
-							userList.get(j).getResourcesList().get(i).setActivity(newActivity);
+							for(int k = 0; k < userList.get(j).getResourcesList().size(); k++){
+								if(userList.get(j).getResourcesList().get(k).getId() == resourcesList.get(i).getId())
+								userList.get(j).getResourcesList().get(k).setActivity(newActivity);
+							}
+							allocationList.add(newAllocation);
 							return;
 							}
 						}
 				}
 				else if(i > 0 && i == resourcesList.size()-1)
 					System.out.println("Nao ha projetores disponiveis");
-				return;
 			}
 			break;
 		default:
@@ -699,11 +708,42 @@ public class Utilities {
 		
 		for(int i = 0; i < userList.size(); i++){
 			if(userList.get(i).getName().equalsIgnoreCase(name)){
-				for(int j = 0; j < allocationList.size(); j++){
-					allocationList.get(j).setStatus("em andamento");
+				for(int k = 0; k < userList.get(i).getResourcesList().size(); k++){
+					if(!confirmEmAndamento(name)){
+						for(int j = 0; j < allocationList.size(); j++){
+							if(userList.get(i).getResourcesList().get(k).getId() == allocationList.get(j).getResourceId() && allocationList.get(j).getStatus().equalsIgnoreCase("alocado")){
+								allocationList.get(j).setStatus("em andamento");
+							}
+						}
+					}else{
+						System.out.println("Este usuario ja possui 2 recursos 'em andamento'");
+						return;
+					}
+				}
+				
+			}
+		}
+	}
+	
+	public boolean confirmEmAndamento(String name){
+		int quantity = 0;
+		for(int j = 0; j < userList.size(); j++){
+			if(userList.get(j).getName().equalsIgnoreCase(name)){
+				for(int i = 0; i < userList.get(j).getResourcesList().size(); i++){
+					for(int k = 0; k < allocationList.size(); k++){
+						if(userList.get(j).getResourcesList().get(i).getId() == allocationList.get(k).getResourceId()){
+							if(allocationList.get(k).getStatus().equals("em andamento")){
+								quantity++;
+								if(quantity > 2)
+									return true;
+							}
+						}
+					}
 				}
 			}
 		}
+
+		return false;
 	}
 	
 	public void relatory(){
